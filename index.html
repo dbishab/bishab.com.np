@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal Domain of Bishab - Linux Mode</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      /* Retro Linux/Terminal Palette */
+      --linux-bg: #0d0d0d;
+      --terminal-green: #00ff41;
+      --terminal-dim: #008f11;
+      --linux-header: #333333;
+      --linux-border: #4a4a4a;
+      --os-white: #e0e0e0;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      background-color: var(--linux-bg);
+      color: var(--os-white);
+      font-family: var(--font-mono);
+      margin: 0;
+      padding: 60px 15px 20px;
+      line-height: 1.5;
+    }
+
+    /* CRT Scanline & Grain Effect */
+    body::before {
+      content: " ";
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+      background-size: 100% 3px;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.3;
+    }
+
+    /* ─────────────────────────────────────────────
+       PANEL (Top Bar)
+    ───────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; width: 100%;
+      height: 30px;
+      background: #000;
+      border-bottom: 1px solid var(--linux-border);
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+      z-index: 1000;
+      font-size: 12px;
+      color: var(--terminal-green);
+    }
+    .panel-item { margin-right: 20px; text-transform: lowercase; }
+
+    /* ─────────────────────────────────────────────
+       AD SLOTS (Linux Styled)
+    ───────────────────────────────────────────── */
+    .ad-container {
+      max-width: 800px;
+      margin: 15px auto;
+      text-align: center;
+    }
+    .ad-slot {
+      border: 1px solid var(--terminal-dim);
+      background: #1a1a1a;
+      color: var(--terminal-dim);
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+    .leaderboard { width: 100%; max-width: 728px; height: 90px; }
+    .rectangle { width: 300px; height: 250px; margin: 30px auto; }
+
+    /* ─────────────────────────────────────────────
+       TERMINAL WINDOW (Responsive)
+    ───────────────────────────────────────────── */
+    .window {
+      background: #111;
+      border: 1px solid var(--linux-border);
+      margin: 20px auto;
+      max-width: 850px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .window-header {
+      background: var(--linux-header);
+      color: var(--os-white);
+      padding: 5px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+    .window-content {
+      padding: 30px;
+    }
+
+    /* ─────────────────────────────────────────────
+       UI ELEMENTS
+    ───────────────────────────────────────────── */
+    .prompt { color: var(--terminal-green); margin-right: 8px; }
+    h1 { font-size: 1.8rem; color: var(--terminal-green); margin: 10px 0; }
+    
+    .status-msg {
+      border-left: 3px solid var(--terminal-green);
+      padding-left: 15px;
+      font-size: 13px;
+      color: var(--terminal-dim);
+      margin-bottom: 25px;
+    }
+
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .icon {
+      text-decoration: none;
+      color: var(--os-white);
+      border: 1px solid var(--linux-border);
+      padding: 15px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .icon:hover {
+      background: var(--terminal-green);
+      color: #000;
+      border-color: var(--terminal-green);
+    }
+    .icon-symbol { display: block; font-size: 24px; margin-bottom: 8px; }
+
+    footer {
+      text-align: center;
+      font-size: 11px;
+      color: var(--linux-border);
+      margin-top: 50px;
+      padding-bottom: 20px;
+    }
+
+    /* ─────────────────────────────────────────────
+       MOBILE ADAPTATION
+    ───────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      body { padding-top: 40px; }
+      .window-content { padding: 20px; }
+      h1 { font-size: 1.4rem; }
+      .icon-grid { grid-template-columns: 1fr; }
+      .leaderboard { height: 60px; font-size: 9px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <span class="panel-item"><strong>root@bishab: ~</strong></span>
+    <span class="panel-item" style="margin-left: auto;">May 10 16:06</span>
+  </nav>
+
+  <div class="ad-container">
+    <div class="ad-slot leaderboard">
+      // SPONSORED_CONTENT_728x90.sh
+    </div>
+  </div>
+
+  <div class="window">
+    <div class="window-header">
+      <span>bash — user@bishab-desktop: /home/domain</span>
+      <div style="opacity: 0.6;">[–] [口] [×]</div>
+    </div>
+    <div class="window-content">
+      <div class="status-msg">
+        Last login: Sun May 10 16:06:42 on tty1<br>
+        Welcome to the dBishab Personal Domain. Active user session established.
+      </div>
+      
+      <span class="prompt">bishab@domain:~$</span> <span>cat intro.md</span>
+      <h1>Personal Domain of Bishab</h1>
+      <p>The personal writing haven of Bishab Dahal — more widely recognized as dBishab. Introspections, musings, and narratives from a mind in constant motion.</p>
+      
+      <br>
+      <span class="prompt">bishab@domain:~$</span> <span>ls -F /explore</span>
+      
+      <div class="icon-grid">
+        <a href="https://www.bishab.com.np/photos" class="icon">
+          <span class="icon-symbol">/img</span>
+          <span>Photos/</span>
+        </a>
+        <a href="https://www.bishab.com.np/stories-and-verses" class="icon">
+          <span class="icon-symbol">/bin</span>
+          <span>Stories/</span>
+        </a>
+        <a href="https://www.bishab.com.np/poetry" class="icon">
+          <span class="icon-symbol">/src</span>
+          <span>Poetry/</span>
+        </a>
+        <a href="https://www.bishab.com.np/about" class="icon">
+          <span class="icon-symbol">/usr</span>
+          <span>About_Me/</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="ad-container">
+    <div class="ad-slot rectangle">
+      &lt;!-- AD_SQUARE_300x250 --&gt;
+    </div>
+  </div>
+
+  <footer>
+    <p>dBishab Personal Domain v2.1.0-linux-kernel</p>
+    <p>© 2025 ALL RIGHTS RESERVED</p>
+  </footer>
+
+</body>
+</html>
