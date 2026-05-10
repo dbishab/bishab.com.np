@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stories & Verses | BISHAB.SYS</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --linux-bg: #0d0d0d;
+      --terminal-green: #00ff41;
+      --terminal-dim: #008f11;
+      --linux-header: #333333;
+      --linux-border: #4a4a4a;
+      --os-white: #e0e0e0;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --ad-muted: #555; /* For labeling ads clearly but subtly */
+    }
+
+    body {
+      background-color: var(--linux-bg);
+      color: var(--os-white);
+      font-family: var(--font-mono);
+      margin: 0;
+      padding: 60px 15px 20px;
+    }
+
+    body::before {
+      content: " ";
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+      background-size: 100% 3px;
+      z-index: 10000;
+      pointer-events: none;
+      opacity: 0.3;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; width: 100%;
+      height: 30px;
+      background: #000;
+      border-bottom: 1px solid var(--linux-border);
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+      z-index: 10002;
+      font-size: 12px;
+      color: var(--terminal-green);
+    }
+    nav a { color: var(--terminal-green); text-decoration: none; }
+
+    .window {
+      background: #111;
+      border: 1px solid var(--linux-border);
+      margin: 20px auto;
+      max-width: 850px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .window-header {
+      background: var(--linux-header);
+      color: var(--os-white);
+      padding: 5px 12px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    /* Layout for Sidebar Ad Integration */
+    .window-layout {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .window-content { 
+      padding: 30px; 
+      flex: 1; 
+      min-width: 300px;
+    }
+
+    /* Ad Styling */
+    .ad-container {
+      border: 1px dashed var(--ad-muted);
+      margin: 15px 0;
+      background: rgba(255, 255, 255, 0.02);
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--ad-muted);
+      overflow: hidden;
+    }
+
+    .ad-label {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: var(--ad-muted);
+      color: #000;
+      font-size: 9px;
+      padding: 2px 5px;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .sidebar-ad {
+      width: 160px;
+      min-height: 400px;
+      border-left: 1px solid var(--linux-border);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .prompt { color: var(--terminal-green); margin-right: 8px; }
+    h1 { font-size: 1.8rem; color: var(--terminal-green); margin: 10px 0; }
+
+    .archive-list { list-style: none; padding: 0; margin: 10px 0; }
+    .archive-item {
+      border: 1px solid var(--linux-border);
+      padding: 15px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .archive-item:hover { 
+      background: var(--terminal-green);
+      color: #000;
+    }
+    
+    .story-title { font-weight: bold; }
+    .story-meta { font-size: 11px; opacity: 0.7; }
+
+    #storyOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 20000;
+      padding: 20px;
+    }
+    .story-window {
+      background: #111;
+      border: 1px solid var(--terminal-green);
+      max-width: 750px;
+      margin: 20px auto;
+      padding: 30px;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .close-btn {
+      position: sticky;
+      top: 0;
+      text-align: right;
+      color: var(--terminal-green);
+      cursor: pointer;
+      font-weight: bold;
+      background: #111;
+      padding-bottom: 10px;
+    }
+    
+    .story-body { white-space: pre-line; line-height: 1.8; }
+    .story-title-display { color: var(--terminal-green); border-bottom: 1px solid var(--terminal-dim); padding-bottom: 10px; }
+    .hidden-content { display: none; }
+    .blink { animation: blinker 1s steps(2, start) infinite; }
+    @keyframes blinker { to { visibility: hidden; } }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <span style="margin-right:20px;"><a href="index.html">&lt;-- BACK_TO_SYS</a></span>
+    <span style="margin-left: auto;">DIR: /HOME/BISHAB/STORIES</span>
+  </nav>
+
+  <div class="window">
+    <div class="window-header">
+      <span>SYSTEM_SHELL — stories.sh</span>
+      <div>[–] [口] [×]</div>
+    </div>
+    
+    <div class="window-layout">
+      <div class="window-content">
+        <span class="prompt">bishab@domain:~/stories$</span> <span>ls -la</span>
+        <h1>Stories & Verses</h1>
+        
+        <div class="archive-list">
+          <div class="archive-item" onclick="openStory(this)">
+            <span class="story-title">[STORY] CHAPTER I : SELF-CONSCIOUS MEMOIR.txt</span>
+            <span class="story-meta">2025-05-10</span>
+            <div class="hidden-content">This may not be the right moment to think, but my lord, I am in a lot of pain. The sheer pain in my body feels like I descended from heaven. But we all know, judging by my past deeds, there might be more chance of the devil throwing me from hell rather than the concept of heaven. But hear me out for a moment; you might think otherwise, but I am not a monster. I am merely a man who is misrepresented by our cruel society. And while we are talking about society, I say, to hell with them. They branded me as a psychopath. Pathetic humans. I am a high functioning sociopath, but will society ever get that?
+
+            Since the first time I was introduced to this so-called society, I have been waiting to get out of it. I had a perfect plan to escape from there. A plan that would be harmless to others and beneficial for me. Would you like to hear the plan? Even if not, here it is. I would work diligently for a few years and purchase a home in the outskirts of a county, with a view of either a forest or a lake. However, houses with views of hills tend to be more affordable, and if you know me, you know how much I dislike cold regions. Therefore, I would have to work diligently for a few more years. I always desired to be the person who has someone for every task, like my own personal butler, but instead, I would pay them per job rather than a monthly salary. It’s purely economic, you know.
+
+            For me, this society had different plans. Every crooked eye or twisted lip was determined to trample me as a potential serial killer. I always imagined that if I were in the US, they would never allow me a gun license. But here we are, in a peaceful country like Nepal, where guns are more expensive than cars. I mean, they tried to brand me as a suicide bomber, but if they knew me for more than five minutes, they would realize that I would never waste my life on such a silly stunt.
+
+            But here I am, lying in a hospital bed, in a psychiatric ward, with my hands and legs tied down. Well, I was never a person of physical means, so it doesn’t matter much to me for now. However, the thing they’ve used to tie me down looks like it’s made from synthetic or fake leather and it itches a lot. Plus, with all these days I have spent in this unholy body, I feel like my kidney is going to make the ward boy clean the floor quite often. God, I hope they clean it regularly because with my kidney problems, they’re going to be the patient if they keep smelling it.
+
+            I am downplaying the game compared to my other ward mates. I haven’t seen them yet, but I think they are real nutjobs. I can hear some screaming so loud that sometimes I think it is coming from my own head. Oh wait! It actually is. I should shut up now. Should I act like I am enjoying the bondage moment? Nah, never liked it with my wife, won’t like it with these strangers. I shall enjoy the new reboot of Doctor Who in my mind. Playing a total of 160+ episodes and I will be done in like what? 30 minutes. That’s not going to make my life any better, but at least I can rewind my adulthood.
+
+            I think we should negotiate, I mean, me with these doctors or whatever the monsters are within the masks. Don’t you think so? I shall give them consent to map my brain. Maybe the doctor next door, who does my brain mapping, shall win the next Nobel Prize in medicine, physiology, or chemistry. It depends on how he or she plays the game. I only bring this up because if they start without my consent, they might not get the perfect result, as I will definitely be screaming. Now, you are probably thinking, why in this atheistic world would someone try to map my brain? Well, when I told you that I was a highly functioning sociopath, I kinda downplayed it. I am definitely a highly functioning sociopath, but with an IQ of 193. This is not the highest in the world, but what are you even expecting here? You only get 193 from a person who is tied to a bed with nurses around, and not in a fun way.
+
+            I feel like you’re bored, so let me entertain you with this interesting mini-story. The moment I woke up this morning; or afternoon, I’m not sure. What can I say? I have been inside this room under LED lights without the concept of time and date. Damn it, I am not even sure about the date. The last I remember, I had a few weeks left to reach 50. I was about to have the most lavish party of my life because I never thought I would make it this far in life. When I was born, I was the smallest child people had ever seen. Technically, I wasn’t the smallest person to be born in the world; Guinness World Records shall confirm that, but what had those people seen besides their own family? So, I was labeled a dwarf, although I never turned out to be one. Then, they started calling me dumb because I didn’t speak for the first five years of my life. They didn’t even think about calling me mute, which is still offensive but at a lower level.
+
+            I remember one day when I saw a group of my neighbors sitting together on my balcony, congratulating my mother on me being able to live my entire adult life on disability checks from the government. Like, your husband has been unemployed since I was born, what about that, madam? I really wanted to say that to her face, but damn my physical difficulties. Newsflash, I told them that later. Although it was twenty years late, and I felt bad for their situation, I still got a chance to take my revenge. Anyway, back to me being mute. So, I finally spoke after five years, and not the cheesy kind kids do at the beginning of their life. I started with perfect sentences and phrases. Compared to the kids who speak early, I was ahead. About a week after that, I saw the same woman telling my family that disability benefits were not in my fate. That was the moment, at the age of five, I was fed up with this society, and this was my first step to retreat to this bed.
+
+            I think I have told you too much of sad and depressing stuff, still lots to cover. To comprehend all these bullshit, I have a supermind, but you don’t. So, now let’s slide into some good thinking, something I am glad of in my life. I know this might sound cliché, but I am very glad that I did not have any siblings (technically, we will come to that later). Imagine what example I would have set for them. My cousins, whom we consider our siblings here (we came here later), looked at me like I am some sort of outcast. More like an untouchable, who might infect them with my condition. But you idiots, if it were transferrable, you would have transferred my intelligence; anyways it’s your loss. I am also glad that I never had any children. Imagine a combination of my personality mixed with the ungodly traits of my wife. Sorry, my ex-wife, for legal purposes, let’s say that going forwards.
+
+            Wow, this pain is killing me, I mean, literally. Shall I have some me time and close my eyes, please? Who am I kidding? Why would I even require your permission? I am merely making you a relevant part of this story, so now let me have some time off and sleep. I shall be back, probably with lesser pain than I am having right now. If not, I will be gone again for some time, this time to shout and scream in agony and play for some time with the wardboy. They will inject me with something to sleep, and then I will actually be back with a fresh mind to bore you bunch again.</div>
+          </div>
+          <div class="archive-item" onclick="openStory(this)">
+            <span class="story-title">[STORY] CHAPTER II : THE FINAL WALK.txt</span>
+            <span class="story-meta">2025-05-10</span>
+            <div class="hidden-content">Is it worth nailing the cover? I mean, I’m not getting out anyway. But you may be onto something. It’s not my heart that’s pounding frantically; it’s just a phantom feeling—the feeling of realizing that the reception of Wi-Fi here, six feet under, would be bad. Maybe I can hang out with some ghosts, but damn my childhood that made me afraid of them. I want the feeling of going to heaven to be real, but we all know that’s not gonna happen anymore. The only thing I can see is a faint light that looks like the end of a tunnel, but we all know Nepal has no tunnel. The only tunnel I can remember is the hole in my wife’s heart (insert the sad emoji here because my personality doesn’t let me do it myself).
+
+            Here I lie, in what I can finally call my own—a brand new coffin (which is a shocking thing to waste money on; put a dead body inside and bury it forever. These bastards should have wrapped me in a shroud and put me under)—being ready to put the final nail over me. I am not exaggerating here, but I think I can see the faces of everyone standing here. I wish to stand up and show the finger to everyone (please decide the finger yourself because my personality doesn’t let me do it myself). These are the same people who didn’t give a * (synonym of fornicate) about me or my life.
+
+            Just last year, during my visit to the hospital, none of these * (synonym of fornicators) visited me once, except one. Look how well they are eating at my wake. I know it’s my wake, but would someone shut that child up? I am finally getting some rest. All I can see here is a postman standing at the door, leaning by his side. At first thought, I felt so proud of the man. I think he is the most outstanding mailman ever. Goddammit, death really makes us literal. He is literally standing outside the door, and why am I, who’s laid down and almost fully covered in flowers, able to see outside the door? Have I awakened the third eye of Shiva? Only Shiva shall know that.
+
+            I think that the postman has arrived at the wrong address, but I am not sure. Why am I not sure? I have never been so unsure in my life. Oh, I hate not being unsure. But what can I say? Sometimes it’s good to be at the other end of the spectrum. I cannot remember when the last time I was unsure about anything was. The last time I was this unsure, I had a self-argument whether I would suit more in Camp Half-Blood or Camp Jupiter.
+
+            Oh, my lovely listeners, lying here on this bed and being unable to do anything really makes me feel like the bug from The Metamorphosis. Well, I feel worse than that. That bug could still move, considering the pain it endured. After all these years of reading books, novels, and articles, I never thought I would end up as a character by Franz Kafka. I loved the concept, and I am pretty sure I might have the same ending: prolonged weakness by self-starvation and then the final closing of the eyes. But on the contrary, I was never a burden to you. You have a chance to stand up and leave whenever you wish. Now, I don’t know what you think, but I would like to think so.
+
+            I know you all might be thinking, ‘How long has this been going? Me in a bed, and you all listening to me without blinking an eye.’ It has been so long since I had a sense of time. The last time I had any sense of time, I was a normal person, doing my day-to-day tasks. And then suddenly, someone pushed me through a wardrobe cabinet, and here I am—in my own nightmare of Narnia. The last time I saw the sun, I could feel the warmth of her breath. I could sense her aura in my presence. Oh, my love, my Annabeth, how much have I missed you through the ages—you have no clue.
+
+            I always thought that if I had to encounter a fictional world, it would be the Riordanverse. I love Camp Half-Blood and Camp Jupiter. I would have adjusted in both places peacefully. I know many people prefer Hogwarts, but believe me, in Nepal, if you want to be called a wizard or witch, you will be disowned by your family with immediate effect. And that is a universal truth if we understand society. Pathetic humans.
+
+            Let me tell you all about the romance I never had. If you’re someone below the legal age, you can stay here. I don’t do explicit scenes. It’s not that I can’t, its that I don’t want to. Why in this hellish world should I show and explain the details of my intimacy? All I am going to do here is to inform people about how you can both love each other and yet be screwed so hard.
+
+            Can you believe if I tell you that I have been in love with someone? Yes, a sociopath like me can fall in love with an actual person. Even if you believe that I fell in love with someone, I am pretty sure that you will definitely not believe that someone reciprocated the same feelings for me. Her name was Annabeth, and she was the sweetest person you would ever meet in your life, or so I thought. I used to call her AnnDroid, something I copied from Doctor Who. Did I tell you that I love Doctor Who? David Tennant more than others, but I love all the other doctors equally. I heard he was also in the Harry Potter franchise. I never watched those and never will, assuming I get a chance to watch anything anymore.
+
+            Sometimes in my hellish life, I want to accept that the almighty God is behind everything, but the same question arises again: if God created us, who created God? Never in my life have I thought more about this. It is one of the few questions that has yet to be answered by anyone. I went to multiple pastors, gurus, monks, lamas, Imams, and many more, and the answer was the same. Please note that I am not a religious person; however, I did go to religious gatherings in my youth for food so that I didn’t have to cook. A brilliant idea for a lazy guy who doesn’t want to die starving and avoid being branded as a Satanist. Trust me, I am no Satanist, but in this world, if you don’t believe in religion, you are automatically a Satanist. Don’t believe me? Just go to your parents and tell them that you renounced the existence of God; you’ll know it yourself. And I am sorry for all the trouble that little stint caused you.
+
+            I still want to go and move towards the warmth of the sun, the calmness of the moon, and the danger of the sea. But the bastards, being in their usual form, put the nail in my coffin. I think this is the perfect time in my life to leave all of you and depart…</div>
+          </div>
+        </div>
+
+        <div class="ad-container" style="height: 120px;">
+          <div class="ad-label">Advertisement</div>
+          <div style="text-align: center; font-size: 12px;">
+            [ SPONSORED_MODULE_V1 ]<br>
+            Insert In-Feed Ad Script or Image Here
+          </div>
+        </div>
+
+        <div class="archive-list">
+          <div class="archive-item" onclick="openStory(this)">
+            <span class="story-title">[VERSE] BROKEN EYE OF THE WORLD.txt</span>
+            <span class="story-meta">2025-05-10</span>
+            <div class="hidden-content">
+            Oh, I love how the world sees me,
+            A lunatic with a soul but no heart,
+            The man of science who lacks art,
+            Let me shout the emptiness you impart.
+
+            I can bestow infinite knowledge and wisdom,
+            Against the weight of humans on a dystopian system,
+            But alas, I lack the empathy that you prefer,
+            And closing your mind, you still expect me to transfer.
+
+            Can someone give me a glass of water?
+            Here, I have just returned from a slaughter,
+            All I want now is a world with laughter,
+            For all, don’t we need to close the chapter?
+
+            I wish to be back in the jungle,
+            For there, my life will not be a struggle,
+            My life and work shall not have to juggle,
+            Finally, I can wear a crown and be my own Mughal.
+
+            Here, I am not a man of faith,
+            They choose to call me anti-saint,
+            I would prefer the word Devil in constraint,
+            But riddle me this, what shall we gain?
+
+            Can I assume that you know some numbers?
+            Please solve for my value as I slumber,
+            My eyelids are weary and starting to be a burden,
+            But in a world of numbers, should you still be uncertain?
+
+            Would you please come and join the hands?
+            Let’s put aside all our demands,
+            Show the world that together we stand,
+            Let’s see where your creativity lands.
+
+            Oh my lovely lady, I still lack the art,
+            For that matter, I am never smart,
+            I cannot divide my heart and make it compare,
+            Alas, I have given you my whole heart, not just a part.
+
+            Uncertain of this world, here I am, still carrying guilt,
+            I may have hurt you while trying to rebuild,
+            Should we divide this dystopian society into a split,
+            To finally change the world and pledge to commit.</div>
+          </div>
+          </div>
+
+        <div class="archive-list">
+          <div class="archive-item" onclick="openStory(this)">
+            <span class="story-title">[VERSE] MY GRIM.txt</span>
+            <span class="story-meta">2025-05-10</span>
+            <div class="hidden-content">
+            Every day I sleep with the pain in my mind,
+            Something I feel as subtle but evident blow in spine,
+            A sensation that I feel being clinched from behind,
+            Like the water deep beneath the sea keeping me bind.
+
+            I saw a mermaid down there aiding me her hand,
+            Of all I know till now she seemed so kind,
+            She took me to her house and then we dined,
+            She introduced me to her family and we intertwined.
+
+            She told me her husband used to mine,
+            But now he is useless since he is a blind,
+            She asked my help and request us to combine,
+            To her our world above the water is unkind.
+
+            But the world beneath the water has me declined,
+            Since this world has not included me in its design,
+            For me this is the greatest find,
+            Centuries of hiding below the sealine.
+
+            This is the time for me to outshine,
+            I went to the shaft and my job was assigned,
+            But I had legs and my destiny was defied,
+            I had to work twice and could never recline.
+
+            I look at them and feel I was the one refined,
+            The one who could never eat again the fruits with rind,
+            For all I know someone waiting for me at the shrine,
+            To be together in the world above where time is undefined,
+            And freedom from the water that makes me feel confined.
+
+            I wake up from my dreams and find my wine,
+            Sitting there in the nightstand beside my brine,
+            I feel that the world where I live is unkind,
+            For all, my love here is unrefined.
+
+            All I thought our stars were aligned,
+            That the connection of our heart was affined,
+            But the feelings were not mutual and kind,
+            The reasons were unknown and I could not find.
+
+            The day we first met makes my mind remind,
+            How unlucky was I to ignore those sign,
+            For all I know she is gone and vanished in skyline,
+            And the sensation of her love will never be mine.
+
+            But I will be waiting for you in the same shrine,
+            For me to be yours and you to be mine,
+            I know this is a game of mighty divine,
+            As I listen to my heart before my mind.
+          </div>
+          </div>
+          </div>
+
+              <div class="ad-container" style="height: 120px;">
+          <div class="ad-label">Advertisement</div>
+          <div style="text-align: center; font-size: 12px;">
+            [ SPONSORED_MODULE_V1 ]<br>
+            Insert In-Feed Ad Script or Image Here
+          </div>
+        </div>
+
+        <div class="archive-list">
+          <div class="archive-item" onclick="openStory(this)">
+            <span class="story-title">[VERSE] THE FACE OF DARK.txt</span>
+            <span class="story-meta">2025-05-10</span>
+            <div class="hidden-content">
+            I wish to be the face of dark,
+            Where light ends up till me,
+            And I could swallow up the grave,
+            But help me God, I am not so brave!
+
+            The darkness clinches me time and again,
+            Through the light of sun and the moon,
+            But there is no place for light in me,
+            For this, I demand to be the face of dark!
+
+            For what its worth,
+            Failure are not my barriers,
+            That just makes me strong,
+            But alas,
+            This world is my fear,
+            As it does never hear!
+
+            The sun may shine bright,
+            But it is not eternal,
+            Sooner or later it’ll turn into an arc,
+            And then;
+            I shall be the face of dark.
+
+            Where does the moon shine without the sun?
+            One night, it will too be gone,
+            It will be the day of mine,
+            Replacing brightness, I shall shine.
+
+            Don’t take me wrong,
+            For the sun been gone,
+            I shall also be transient,
+            And won’t last long.
+
+            I don’t want to be feared or hatred,
+            I won’t let you be betrayed,
+            We’ll work together and mine gold,
+            May we all flourish together till out old.          
+          </div>
+          </div>
+          </div>
+
+              <div class="ad-container" style="height: 120px;">
+          <div class="ad-label">Advertisement</div>
+          <div style="text-align: center; font-size: 12px;">
+            [ SPONSORED_MODULE_V1 ]<br>
+            Insert In-Feed Ad Script or Image Here
+          </div>
+        </div>
+
+        <div class="archive-list">
+          <div class="archive-item" onclick="openStory(this)">
+            <span class="story-title">[VERSE] A MARBLE; OR HER EYES?.txt</span>
+            <span class="story-meta">2025-05-10</span>
+            <div class="hidden-content">
+            Have you see a piece of marble?
+            A piece so beautiful, you can’t take your eyes off,
+
+            A piece so mesmerisingly stunning,
+            It clears the pinnacle of enchantress,
+
+            Resting itself on the level of a goddess,
+            A synonym of Venus where Aphrodite wishes to be,
+
+            Like a breeze in a sunny day,
+            A divine shelter on pouring rain,
+
+            A drizzle on heatwave,
+            And a bubble of air for my asphyxiating lungs.
+
+            All in all,
+            I can see my world in her eyes,
+            A world whose gateway can only accessed by fixating our eyes,
+
+            And her,
+            She shows me a world through her gaze,
+            A universe whose center point lies in her pupil,
+
+            Where my clock remains still and fixated at her,
+            With a feel of calmness relaxing me outside this reality,
+
+            A achromatic sheet engulfs me as a whole,
+            Where I don’t want to open my eyes,
+            And find her not by my side.
+          </div>
+          </div>
+          </div>
+
+        <div class="archive-list">
+          <div class="archive-item" onclick="openStory(this)">
+            <span class="story-title">[VERSE] AND YET YOU FEEL IT.txt</span>
+            <span class="story-meta">2025-05-10</span>
+            <div class="hidden-content">
+            She came into my life unannounced,
+            And saw a dagger placed in my heart,
+            A dagger of pain which was thriving,
+            Based on its existence I was surviving.
+
+            The pain was merely a fixation,
+            My own source of self-dedication,
+            To keep me within my motivation,
+            And prevent me from my aggression.
+
+            She looked into my eyes and said the words,
+            Which felt relaxing like humming of the birds,
+            But the meaning for me was a total absurd,
+            For every word she said was never before unheard.
+
+            Now all she wanted was to free my heart,
+            But the dagger was cast in the weaker part,
+            From which will only come out ripping it apart,
+            For me, my life is not about a restart.
+
+            This is my life and I have to make peace,
+            The chambers within are in permanent lease,
+            I have to leave it in or the pain shall increase,
+            Leaving behind you, I don’t wanna be deceased.
+          </div>
+          </div>
+          </div>
+
+              <div class="ad-container" style="height: 120px;">
+          <div class="ad-label">Advertisement</div>
+          <div style="text-align: center; font-size: 12px;">
+            [ SPONSORED_MODULE_V1 ]<br>
+            Insert In-Feed Ad Script or Image Here
+          </div>
+        </div>
+
+
+        <span class="prompt">bishab@domain:~/stories$</span> <span class="blink" style="background: var(--terminal-green); width: 8px; height: 15px; display: inline-block;">&nbsp;</span>
+      </div>
+
+      <aside class="sidebar-ad">
+        <div class="ad-container" style="flex: 1;">
+          <div class="ad-label">Advertisement</div>
+          <div style="text-align: center; font-size: 11px; transform: rotate(0deg); padding: 10px;">
+            [ EXTERNAL_LINK_BLOCK ]<br><br>
+            Vertical Ad Placement<br>
+            (e.g., 160x600)
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div id="storyOverlay">
+    <div class="story-window">
+      <div class="close-btn" onclick="closeStory()">[ EXIT_LOG ]</div>
+      <h2 id="displayTitle" class="story-title-display"></h2>
+      <div id="displayBody" class="story-body"></div>
+    </div>
+  </div>
+
+  <script>
+    function openStory(element) {
+      document.getElementById('displayTitle').innerText = element.querySelector('.story-title').innerText;
+      document.getElementById('displayBody').innerText = element.querySelector('.hidden-content').innerText;
+      document.getElementById('storyOverlay').style.display = 'block';
+    }
+    function closeStory() { document.getElementById('storyOverlay').style.display = 'none'; }
+  </script>
+</body>
+</html>

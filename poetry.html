@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Poetry Archive | dBishab Linux Terminal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --linux-bg: #0d0d0d;
+      --terminal-green: #00ff41;
+      --terminal-dim: #008f11;
+      --linux-header: #333333;
+      --linux-border: #4a4a4a;
+      --os-white: #e0e0e0;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--linux-bg);
+      color: var(--os-white);
+      font-family: var(--font-mono);
+      margin: 0;
+      padding: 60px 15px 20px;
+    }
+
+    body::before {
+      content: " ";
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%,
+        rgba(0, 0, 0, 0.1) 50%
+      );
+      background-size: 100% 3px;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.2;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 30px;
+      background: #000;
+      border-bottom: 1px solid var(--linux-border);
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+      z-index: 1000;
+      font-size: 12px;
+      color: var(--terminal-green);
+    }
+
+    .ad-container {
+      max-width: 800px;
+      margin: 15px auto;
+      text-align: center;
+    }
+
+    .ad-slot {
+      border: 1px solid var(--terminal-dim);
+      background: #1a1a1a;
+      color: var(--terminal-dim);
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    .leaderboard {
+      width: 100%;
+      max-width: 728px;
+      height: 90px;
+    }
+
+    .page-layout {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 20px;
+      max-width: 1250px;
+      margin: 0 auto;
+    }
+
+    .side-ad {
+      position: sticky;
+      top: 60px;
+    }
+
+    .side-ad .ad-slot {
+      width: 160px;
+      height: 600px;
+    }
+
+    .bottom-ad {
+      margin-top: 30px;
+    }
+
+    .window {
+      background: #111;
+      border: 1px solid var(--linux-border);
+      margin: 20px auto;
+      max-width: 900px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .window-header {
+      background: var(--linux-header);
+      color: var(--os-white);
+      padding: 5px 12px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 16px;
+    }
+
+    .window-content {
+      padding: 30px;
+    }
+
+    .prompt {
+      color: var(--terminal-green);
+    }
+
+    .poetry-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin: 30px 0;
+    }
+
+    .poem-card {
+      border: 1px solid var(--linux-border);
+      padding: 15px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: 0.2s;
+    }
+
+    .poem-card:hover {
+      background: var(--terminal-green);
+      color: #000;
+      border-color: var(--terminal-green);
+    }
+
+    #poemOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 10000;
+      padding: 20px;
+    }
+
+    .poem-window {
+      background: #111;
+      border: 1px solid var(--terminal-green);
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 30px;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .close-btn {
+      position: sticky;
+      top: 0;
+      text-align: right;
+      color: var(--terminal-green);
+      cursor: pointer;
+      font-weight: bold;
+      background: #111;
+      padding-bottom: 10px;
+    }
+
+    .poem-body {
+      white-space: pre-line;
+      line-height: 1.8;
+      font-size: 1.1rem;
+    }
+
+    .poem-title-display {
+      color: var(--terminal-green);
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--terminal-dim);
+      padding-bottom: 10px;
+    }
+
+    .hidden-content {
+      display: none;
+    }
+
+    .blink {
+      animation: blinker 1s linear infinite;
+    }
+
+    @keyframes blinker {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .side-ad {
+        display: none;
+      }
+
+      .page-layout {
+        display: block;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .window-content {
+        padding: 20px;
+      }
+
+      .poetry-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <span style="margin-right:20px;">
+      <a href="index.html" style="color:inherit; text-decoration:none;">
+        &lt;-- CD ..
+      </a>
+    </span>
+
+    <span>/home/bishab/poetry</span>
+
+    <span id="live-clock" style="margin-left: auto;">
+      Loading system time...
+    </span>
+  </nav>
+
+  <!-- TOP AD -->
+  <div class="ad-container">
+    <div class="ad-slot leaderboard">
+      // SPONSORED_CONTENT_728x90_TOP.sh
+    </div>
+  </div>
+
+  <div class="page-layout">
+
+    <!-- MAIN CONTENT -->
+    <div class="window">
+
+      <div class="window-header">
+        <span>bash — poetry_archive.sh</span>
+        <span>[–] [口] [×]</span>
+      </div>
+
+      <div class="window-content">
+
+        <span class="prompt">bishab@domain:~/poetry$</span>
+        <span id="ip-display">ping...</span>
+
+        <h1>Poetry Archive</h1>
+
+        <div class="poetry-grid">
+
+          <div class="poem-card" onclick="openPoem(this)">
+           
+
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              संसारको रित
+            </div>
+
+            <div class="hidden-content"> 
+              सधैँ मन्दिरको ढोकामा उभिने ऊ,
+              आज किन घाटमा बसि रमिता हेर्दै छ?
+
+              हिजो मूर्ति मुनिको सिक्का उठाउने ऊ,
+              आज किन बाटोका टिला सोहोर्दै छ?
+
+              सांसारिक यस लोकको एक चरित्र ऊ,
+              आज किन नैतिकताको परीबन्ध तोडेको छ?
+
+              अरूको पटकथाको पृष्ठभूमिमा नाच्ने ऊ,
+              आज किन नेपथ्य छाडी मुख्य पात्र भएको छ?
+
+              सधैँ भाग्यको व्यवहारमा ढल्ने बालक,
+              आज किन आफ्नो नियति बदल्न तम्सिएको छ?
+
+              कर्तव्य उसको पनि नहोला भन्न सकिन्न यहाँ,
+              किनकि संसारको रितमा आज ऊ पुरै डुबेको छ।
+            </div>
+          </div>
+
+             <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              ढिपी
+            </div>
+
+            <div class="hidden-content"> 
+              अनिदो छु म केही दिनदेखि निद्राबोकेको भारी आंखीभौं साथ,
+              किनकी आज पनि मेरो सपनामा आउँछौ तिमी त्यही रुपमा हरेक रात,
+
+              तिम्रो त्यो नसालु नयन र गुलबि अधर साथै तिम्रो तातो सास मिसिएको स्वर,
+              अनि सँगै बसेर हेरेको त्यो पुर्णिमाको चम्किलो जून र गनेका अनगिन्ती ताराहरु,
+
+              तर जब सन्ध्या आउँछ ती जुनताराहरु जस्तै तिमी पनि बिलाउँछौ अचानक नबोली,
+              र झसङ्ग भइ सम्झन्छु त्यो रात जब मैले पनि तिमीसंगै स्वर्गमा रहने ढिपी गरि हारेको।
+
+
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              भुलेको ठेगाना
+            </div>
+
+            <div class="hidden-content"> 
+              जीउँदै छु म आज यहाँ कुनै आशा बिना,
+              जुड्दै छन् यहाँ सम्बन्ध आज कुनै अस्तित्व बिना,
+              मूल्य हारेको छ सुन आज दुनियाँ पाउदैछु म पित्तलको बहाना,
+              गुलाम त हैन म कसैको केबल छु भुलेको आफ्नो बिगतको ठेगाना।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              मृत्यु शय्या
+            </div>
+
+            <div class="hidden-content"> 
+              कुर्दा कुर्दै हरायो मेरो अस्तित्व,
+              कहिले जीवनको दौडमा,
+              कहिले भीडको माझमा,
+              भने कहिले चाहनाको आशमा।
+
+              र,
+              आज पनि कुर्दै नै छु म यहाँ,
+              एउटा कात्रोको थाङ्ना,
+              अस्पतालको मृत्यु शय्यामा,
+              अनि त्यसलाई पहिराइदिने हात।
+            </div>
+          </div>
+
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              उध्रेको मन
+            </div>
+
+            <div class="hidden-content"> 
+              सिलाउँदै थिए एक्लै,
+              उध्रेको यो मेरो मन,
+
+              धागो थियो उनैको हातमा,
+              मेरो धमिलिएको यो दृष्टि,
+
+              चुँडियो त्यो धागोको लर्को,
+              अनि छरपष्ट भयो अन्तर्मन,
+
+              सडक छेउको ढल जस्तै बगेर,
+              दर्शकको भीडमा नबुझ्ने धेरै ,
+
+              तर बुझ पचाउने भने आत्मीय,
+              वास्तविकता कहुँ छ सपनाझैं,
+
+              मेरो जीवनको यो सारांश,
+              न त आँखामा सम्हाल्न सकिन्छ,
+              न त यो पापी मनमा सजाउन नै।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              ऐना
+            </div>
+
+            <div class="hidden-content"> 
+              ऐनामा देखेको हाम्रो युगल आकृति,
+              त्यसलाई हेरी गरेको भविष्यको कल्पना,
+
+              सँगै गरेका केही जुनिजुनिभरीका अठोट,
+              अनि साथै खाएका ति अनगिन्ती बाचाहरु,
+
+              जुधाई आँखा घण्टौं बसि एकअर्कालाई हेरी,
+              तिमी मुसुक्क मुस्काइ भावना झल्काएको क्षण,
+
+              यता भवनाहिन तिम्रो मायाको कर बढ्दै गयो,
+              उता भने विश्वासको प्रेमाबिहिन ऋण थपिँदै,
+
+              सोच्छु आज कसरी घाम पश्चिमबाट उदायो,
+              के कमी थियो र हाम्रो माया खोलामा सेलायो,
+
+              वियोगान्त भई कल्पनामा डुब्दै अझै पनि,
+              झल्किन्छ भावना तिम्रोलागि यहीँ आज पनि,
+
+              हेर्छु तिमीलाई अर्काको अंगालोमा,
+              सम्झन्छु ति विगतका हाम्रा क्षण,
+
+              खलखली बगी मेरो मनको पसिना,
+              तपकिन्छ अघि आँखाको बाटो हुँदै,
+
+              सोधे कसैलाई दुखेको यो मन हो भन्छन,
+              तर यो दुखेको हैन फुटेको मेरो भाग्यो हो।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              झरी
+            </div>
+
+            <div class="hidden-content"> 
+              दिनभरको झरी पछि केहि खुलेको आकाश हेर्दै,
+              पारीजातको रुखमुनि सुख्खा खोजि एक रुमालमा बसेको दुई ज्यान,
+
+              धेरै समयको सम्पर्कबिहिनता पछि पुन: पाएको आत्मीयता सॅंगाली,
+              थोरै बोल्दै धेरै एक अर्काको अँगालोमा रमाउॅंदै विताएको सन्ध्या,
+
+              केहि अतितका मुस्कान र भविष्यका चिन्ता बोकेका थकित काँध,
+              डुव्दै गरेको त्यो घाम हेर्दै एकअर्काको हातमाथि हात राखी,
+
+              उनको लाली लाएको ओठमा मेरो रुखो ओठ जोड्दै पाएको स्वर्गानुभुति,
+              अनि लाजले गाला रातो पारी मेरो अँगालोमा डुबेको उनको लामो सास,
+
+              सन्ध्याको समयमा आत्तिदै पर हटेर उनी मुसुक्क मुस्कुराईन,
+              तर समय साक्षि राखी बिताएको क्षणले आफ्नो ऋण माग्यो,
+              र उनको त्यहि मुस्कानले मलाई अब छाडेर जान आदेश प्रदान गर्यो।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              गिरफ्तार रही यो जिन्दगीको
+            </div>
+
+            <div class="hidden-content"> 
+              आज पनि कुहिरोको बीचमा हराएका ताराहरु,
+              अनि उर्जाहिन स्वादको यो घामहिन श्वेत सूर्य,
+
+              पश्चिममा उदाएदेखि पूर्वमा अस्ताएसम्म पछ्याई,
+              निरर्थक हेर्दै बस्छु यो औँसीको रातमा अर्थहीन चन्द्र,
+
+              अनि देख्दछु पुनः झलकिदै गरेका आफ्ना ती अतीत,
+              प्रत्युच्चारित यो मनमा रहेका पुराना यादहरु झलकिदै,
+
+              अनि सकिन्छ रात एकलास ठाउँमा गिरफ्तार रही यो जिन्दगीको।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              कालो
+            </div>
+
+            <div class="hidden-content"> 
+              रङ,
+              रङ त कालोले नै मलाई दर्शाउथ्यो,
+              त्यो मेरो उदेश्य बिनाको जीवन,
+              त्यो औचित्य बिनाको चाहना,
+              त्यो मरुभूमिको लामो रात,
+              जहाँ चन्द्रमाको कुनै औचित्य हुदैन,
+              र ताराहरु पनि टिल्मिलाउन अन्कनाउछन्।
+
+              अनि मेरो त्यही जीवन जुन पहिले पुर्ण कालो थियो,
+              कहिले काहीं पुर्ण सफेद भैदिन्थ्यो,
+              कोहरा लागेको मिर्मिरे जस्तो,
+              जहाँ आफुलाई त थाहा हुन्थ्यो म कहाँ छु भनेर,
+              तर केही परको पनि आभास गर्न मुस्किल पर्थ्यो।
+
+              तर,
+              तर तिम्रो आगमनसंगै मैले खुला आकश,
+              जुन आफ्नो साबिक स्थानमै थियो,
+              त्यसको अस्तित्वको भान पाए,
+              त्यो निश्चल अनि अनन्तसम्म फैलिएको सागर,
+              त्यो बिज्ञानले नि पुर्ण दहन भनेको निलो ज्वाला,
+              त्यो अक्सिजन नपाएर कलंकित भएको तन,
+              र मुटुमा छेदन भै समय नपुग्दै जन्मिएको शिशु,
+              यी सबैले केबल तिम्रो त्यो निलो नयनको प्रतीक दर्शाउछ,
+              जुन मेरो मनको गहन कक्षमा पुर्णरुपमा कुदिएको छ।
+
+              तथाकथितको पर्यायवाची बनेको मेरो जीवन,
+              तिम्रो आगमनले तथागतको खादा पहिरियो,
+              मेरो अस्तित्व जुन मैलिएर शुन्यमा बिलाप हुन पुगेको थियो,
+              त्यसलाई तिमिले एक नयाँ जिवनदान प्रदान गर्यौ,
+              मृत्युको टुप्पोमा पुगेको मेरो जीवनरेखालाई तिमिले पुछारमा पुर्यायौ,
+
+              र,
+              हाँसेर समय आएपछी मृत्युुलाई अङ्गाल्नु पर्छ भनेर सिकायौ,
+              किनकी बाँच्ने पनि एउटा सिमा हुन्छ,
+              र मृत्युभन्दा अगाडि केही हुन्न।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              रंगीन श्यामश्वेत
+            </div>
+
+            <div class="hidden-content"> 
+              जीवन रंगीन छ,
+              जता त्यतै विभिन्न वर्णको,
+              सबै जातलाई रंगको आधारमा छुट्याउँदै,
+              त्यो साहसको प्रतीक जनाउने रातो,
+              अनि निलो रङ शान्तिमय प्रेरणा जनाउँदै,
+              सेतोलाई न्यूनतमता को पगरी पहनाई,
+              भन्दछ कालोलाई तँ परिष्कारको भावना दर्सा,
+              तर म हेर्छु जीवनलाई केबल दुई रंगमा,
+              दुई रङको एक समिश्रण,
+              जसमा केवल न्यूनतमता छ,
+              र त्यसमा घेरिएको परिष्कार,
+              अनि श्यामश्वेत मेरो जीवन।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              अनन्त र निरन्तरमा
+            </div>
+
+            <div class="hidden-content"> 
+              अनन्त र निरन्तरमा तिमी नझुक्क प्रिय,
+              निरन्तर एक प्रक्रिया हो,
+              चक्रको पद्मव्यूहमा बेरिएको भने
+              अनन्त अन्त्यको समाप्ती,
+              समयबिहिन अमरत्वको अपेक्षाहिन उपलब्धि,
+              जहाँ साथले निरन्तरताको प्रतिक दर्साउछ भने,
+              प्रेमले अनन्तको अनुभुती प्रदान गर्दछ।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              मौन उत्तर
+            </div>
+
+            <div class="hidden-content"> 
+              शान्त छ आकाश आज,
+              निःशब्द हावाको सिरेटो,
+              भौतारिएको मन आज,
+              छट्पटीदैछ तन यहाँ,
+              स्वयंसँग निधो माग्दै,
+              विचलित यो मेरो मन,
+              तर छन् त केबल यहाँ,
+              छरपष्ट प्रश्न अनि
+              तिम्रो मौन उत्तर।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              के कुरा गर्नु?
+            </div>
+
+            <div class="hidden-content"> 
+              त्यो सपनाको पनि के कुरा गर्नु,
+              जुन निद्राको प्रतीक्षा गरिरहेको छ,
+
+              त्यो भविष्यको पनि के कुरा गर्नु,
+              जुन वर्तमानमा कहीं हराएको छ,
+
+              म त अब भावनाको कुरा गर्छु यहाँ,
+              जुन मनको कुनामा कतै दाबिएको छ,
+
+              मेरा केही चाहेका अनगिन्ती रहरहरु,
+              जुन दिलको गहिराइमा कतै भासिएको छ,
+
+              ती देखेका मेरा केही साना सपनाहरु,
+              जुन साथसँगै कतै हराएर गएको छ,
+
+              अनि मेरा केही पूर्ण भएका चाहनाहरू,
+              जुन विगतबाट मलाई चियाइ हासिरहेको छ,
+
+              अब त केबल चाहना छ त्यो सेतो कपडाको,
+              जसको थाङ्नाले सबैको प्यारो बनाउँछ,
+              अनि दिन्छ अनगिन्ती समय एकान्तमा उभिने,
+              र कात्रोमा बेरिएको आफ्नो प्रतिविम्व हेर्ने।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              छरपस्ट
+            </div>
+
+            <div class="hidden-content"> 
+              हेर भुइँमा छरपस्ट पोखियो,
+              यि आँखाका पानी आज,
+
+              भिजेका मेरा आँखा यहाँ,
+              जुधेछन् तिम्रा नयनसॅंग, 
+
+              सम्झि त्यसलाई अश्रुका थोप्लो,
+              छाड्यौ तिमीले सहानुभूतिको मन्द मुस्कान,
+
+              रक्तबिहिन मेरो नसामा बगेको अस्तित्वहिन् तरल,
+              सायद अत्यासको भावना या कल्पनाको टुक्रा होला,
+
+              हरायौ भिड्को माझ तिमी अनि तिमीलाई पछ्याउॅंदै म,
+              पाएँ आफुलाई नयाँ जगतमा बेरिएको तिम्रो अँगालोमा, 
+
+              जहाँ खुला आकाशबाट झरेको शब्दको झरी,
+              अनि त्यसको भावनामा रुझेको मेरो मनको बोझ,
+
+              हिजोसम्म दुनियांको अगाडि बेगारी म,
+              आज यस संसारको सम्राट अनि छेउमा मेरी प्रियसी,
+
+              आफ्नो नयाँ स्वप्नलोकमा प्रफुल्लित भई रमाउदै एकलास,
+              झसङ्ग भै दिवास्वप्नबाट बिउझीए वास्तविकताको संसारमा,
+
+              जहाँ मेरो उजाड यो जीवनमा खोज्दै छु आफ्नो अस्तित्व एक्लै,
+              अझै झुन्डिएको छु यहीं एकाकी पर्खी केबल तिम्रो न्यानो स्पर्श,
+
+              भौतारीए सारा दुनियाँ उनको खोजिमा चाहार्दै गल्ली र गोरेटाहरु,
+              पुगे फेरी त्यहि बिसौनीमा अनि नेत्रभरी आँसु अनि उहि तिम्रो मुस्कान,
+
+              भावनै भावनाको उदाङ्ग दुनियामा म अन्तरङ्ग रोज्दै रहे,
+              तिमी मेरै अगाडि उभि रह्यौ म भने अनामिका खोज्दै रहे।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              नेपथ्य
+            </div>
+
+            <div class="hidden-content"> 
+              तिमी जिन्दगीमा प्रकाश भएर आयौ,
+              तर म नेपथ्य पछाडिको छाया रहेछु,
+              सारा संसारलाई तिमिले उज्यालो छरेउ,
+              म भने पर्दा पछाडि हराएछु।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              बुख्याचा
+            </div>
+
+            <div class="hidden-content"> 
+              बुख्याचाको एक्लो अस्तित्व,
+              घामको राप अनुयाउदै चन्द्रको शीतल,
+
+              नियाल्दै जीवन अनि फैलाउदै प्रज्ञा,
+              देख्दैछु अडिग नैतिकताको स्तम्भमा,
+
+              जवानिको पसिनाले निथ्रुक्क जोडी,
+              र उक्त दिन समझदै बुढ्यौलीको थकान,
+
+              उहि पात्र, फरक समय अनि दृश्य अनेक,
+              सबै प्रतियोगी यहाँ जीवनको खेल भने समयको। 
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              आँशुको अंश
+            </div>
+
+            <div class="hidden-content"> 
+              कोट्याई मानुसलाई सोध्छ ए दैव,
+              चाहन्छस् के खुसी या आँशुको अंश?
+
+              कहन्छ मलाई ए दानव आँशुको भार बोकाइदे यो काधमा,
+              सुम्पिदे मेरो भागको खुसी पनि मेरी अनामिकालाई।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              आज अञ्जन
+            </div>
+
+            <div class="hidden-content"> 
+              त्यो चुरोट जस्तै जलिजाने,
+              धुवाँ भर्दै उडाएको यो मन,
+
+              कर्तव्यबाट टाढा भाग्दै म,
+              यस दुनियाँमा आज अञ्जन,
+
+              मेरो उजाड यो जीवनमा,
+              खोज्दै आफ्नो अस्तित्व एक्लै,
+
+              अझै झुन्डिएको छु यहीं एकाकी,
+              पर्खी केबल तिम्रो न्यानो स्पर्श। 
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              एकाकीपन
+            </div>
+
+            <div class="hidden-content"> 
+              बिम्ब र प्रतिबिम्बको बिचमा झुन्डिएको यो आकृती,
+              कल्पनाको सानो संसारमा रहेको त्यो एक क्षणिक पल,
+              अनि सम्झनामा रहेका हाम्रा अतितका क्षणिक सम्झना,
+              बिगतदेखि बर्तमानसम्मको यो नितान्त अनुग्रहपुर्ण यात्रा,
+              जात हेर मेरो यो बदनसंगै आउने पसिना पनि सुकेर जाने,
+              धर्म हेर मेरो यो भौतिक शरीर पनि अमर कहाँ छ र जन्मजात,
+              कि त माटोमा मिल्छ कि खोलानालामा खरानीसरि बिलाउछ,
+              के गर्छौ घमण्ड कर्म खोटो भए,
+              भर्छ के जात धर्मले तिम्रो भाग्यको तो अपर्याप्त एकाकीपन?
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              यथार्थरुपि भ्रमहरु
+            </div>
+
+            <div class="hidden-content"> 
+              पर्खाइमा बितेका ती अनगिन्ती पलहरु,
+              अनि सम्झनामा भिजेका हजारौं सिरानी,
+              आज पुराना भए मेरोसामु किनकी,
+              पर्खाइले समयको महत्व सिकायो,
+              र सम्झनाले विश्वासको सामथ्र्य,
+              डोर्‍याइ मलाई टाढा आज सबैबाट,
+              फर्कायो कल्पनाको बिरानो देहातबाट वास्तविकतामा,
+              जहाँ समय न मेरो आफ्नो रहेछ न मेरो सापेक्ष,
+              बस् आफ्ना रहेछन त केबल यी यथार्थरुपि भ्रमहरु।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              अडिग
+            </div>
+
+            <div class="hidden-content"> 
+              गुमाए महत्व पाउने रहेछ यो संसार किनकि आजको बेगारी यहाँ,
+              मलाई जलाउने दाउरा पनि कतै निकम्मा रुखभई अडिग होला।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              हराएको मन
+            </div>
+
+            <div class="hidden-content"> 
+              यो एकान्त शिशिरको रात,
+              माथि आकाशमा टहटह लागेको जुन,
+              अनि बाहिर चलेको हावाको चिसो सिरेटो,
+              तर भित्रभित्रै भने एक्लै भक्कानिएको यो मन,
+              अनि परिस्थिति भने आफैलाई सम्हाल्नुपर्ने बाध्यता,
+              यही रहेछ जीवनको पर्याय यो एक्लो रात अनि हराएको मन।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              अन्तर्मन
+            </div>
+
+            <div class="hidden-content"> 
+              तिमी हेर्छौ मलाई एकोहोरो टोलाएर,
+              बुझे जस्तो गर्छौ मेरो अन्तर्मन,
+
+              मेरो सबै भावना अनि मनका तरंगहरू,
+              बन्दछ केही अनायासै पलहरु आँखा जुधेपछि,
+
+              तिमी देखाउन चाहन्छौ केवल आफ्ना गुणहरू,
+              अनि म लुकाउँछु नेपथ्यमा आफ्ना अवगुणहरु,
+
+              चल्छ हावाको एउटा सानो लहर उडाउँदै त्यो गुणी पर्दा,
+              अनि पुनः सुरु हुन्छ यही कथा फरक चारित्रिक पत्र साथ।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              सपनाकी एक प्रियसी मायालु
+            </div>
+
+            <div class="hidden-content"> 
+              अस्तित्व तिम्रो अझै गुमनाम छ,
+              तर आगमन मेरो सपनामा दिनहुँ हुन्छ,
+
+              अनि संसार कल्पनाको सिंगरिन्छ युगल,
+              अनामिकाको पगरी पहनी तिमी,
+
+              रमाउँछौ मेरो छातीमा समाई,
+              क्षणिक स्वप्नमा सारा पिरदुःख खोसी,
+
+              दिन्छौ मलाई एक अनौठो अनुभव सँगल्न,
+              अविस्मरणीय झझल्को अनन्तसम्मलाई तर,
+
+              विउँझि निदबाट हेर्छु वरिपरि मेरो सानो कोठामा,
+              खाली क्यान्भास अनि एकाकीपनमा घेरिएको म,
+
+              अतालिदै खोज्दछु तिमीलाई वरपर भेट्ने आशामा,
+              अनि देख्दछु तिम्रो आकृति कोरिएको मेरै कुचीले,
+
+              रंगमा डुबाइ पुनः चलाउँछु मेरो हात त्यही सफेद पर्दामा,
+              अनि कोर्दछु मेरो सपनाकी एक प्रियसी मायालु।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              फरक
+            </div>
+
+            <div class="hidden-content"> 
+              तिमी कफन ओढ्छौ, म कात्रो,
+              तिमी भगवान पूज्छौ, म जन्मजात काफिर।
+
+              तिमी पुनर्जन्मको सोचमा पुण्य गर्छौं,
+              म एकफेरि जीवन सम्झि पल पल बाँच्छु।
+
+              तिमी पश्चातापको बोझ मनमा बोकि मर्छौं,
+              म भने आफुलाई विश्व बिजेता सम्झी।
+
+              फरक केबल यति छ,
+              तिमी मृत्युको डरमा बाँच्छौ,
+              म मृत्यु बिर्सेर बाँच्छु।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              बिलुप्त
+            </div>
+
+            <div class="hidden-content"> 
+              चाहना छ यहाँ देखिने भावना बिना,
+              भुलिदो छ वाचा यहाँ अनि दोधारमा प्रतिज्ञा,
+              बल्झिदो छ मनको घाउ किन आज पटक पटक,
+              बिलुप्त यो भौतिक शरीर भयो मेरो मनको रजटपट।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              चोट
+            </div>
+
+            <div class="hidden-content"> 
+              सानोमा शरीरमा लागेको त्यो चोट,
+              जिन्दगीभरी देखिने खत छाडी गयो,
+
+              दुनियाँले देखे,
+              अनि त्यो पीडा बुझेर महसुस गरे,
+
+              तर आज ठूलो भएपछि लागेको चोट,
+              त्यो शरीरको खतभन्दा बिशाल छ,
+
+              तर फरक केबल यति छ,
+              यो चोट त मनमा लागेको छ,
+              न त कसैले देख्छ, न मर्म नै बुझ्छ।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              बाँच्ने आधार
+            </div>
+
+            <div class="hidden-content"> 
+              भावना त अझै पनि छ मनमा सङालेको,
+              अनि सम्झना बनेको यहाँ बाँच्ने आधार,
+              देख्दछु सपनामा आज पनि तिम्रो आकृती,
+              र सम्झन खोज्छु त्यो अपरिचित अनुहार,
+              जुन स्नेहिक अपवादको प्रतीक दर्शाउछ।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              तिमी र, म
+            </div>
+
+            <div class="hidden-content"> 
+              तिमी चाहना भन्छौ,
+              म भावना,
+
+              तिमी बिचार गर्छौ,
+              म प्रेरणा लिन्छु,
+
+              तिमी कल्पनामा जिउछौ,
+              म बास्तबिकतामा,
+
+              तिमी एक्लै रमाउछौ,
+              म तिमिसङ युगल,
+
+              सायद यहि रहेछ फरक,
+              तिमी आफैंलाई स्थापित गर्छौ,
+              र, म हाम्रो सम्बन्धको मौलिकता।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              देख्दैछु म
+            </div>
+
+            <div class="hidden-content"> 
+              आखाका अगाडि खेल्ने ती सपनाहरू आज हकिकत देख्दैछु म,
+              क्रान्तिकोलागि उठ्ने ती हातहरु आज हलो उठाउन बाध्य देख्दैछु म,
+              साथसाथै लडेका साथीहरू आज ७०ले बदनाम देख्दैछु म,
+              त्यही दैनिकीको ७०ले परिवार पाल्ने कल्पना देख्दैछु म।
+
+              परिवार र आफन्तसङ रम्नलाई थाइल्यान्ड र कम्बोडिया जाने मान्छे पनि देख्दैछु म,
+              ६ दिन मज्दुरी गरेर सातौं दिन परिवारसङ झुपडीमा रमाउने ब्यक्ति पनि देख्दैछु म,
+              सामान्य पखालाको औषधि नपुगेको क्षेत्रमा भासणको लहर फस्टाएको देख्दैछु म,
+              बुढेसकालमा पनि बैँस लागेका जननिर्वाचित प्रतिनिधि आफ्नै देशमा देख्दैछु म।
+
+              पुस्तक रट्नेलाई विद्वान र समाज पढ्नेलाई निकम्मा देख्दैछु म,
+              बिध्याको पक्ष लिएर बोल्नेलाई यहाँ धनले सम्मान गरेको देख्दैछु म,
+              ऐना देखाउनेलाई जेल र करोडौं कुम्ल्याउनेसङ आत्मीय मेल देख्दैछु म,
+              भोजको मोजमा रमाइ अल्पसंख्यकलाई गरिने व्यवहार अमानवीय देख्दैछु म।
+
+              बिलासको लालसामा आफ्नाले आफ्नैलाई बेचेको देख्दैछु म,
+              केही पैसाकोलागि बर्षाैको सम्बन्ध तुहाएको देख्दैछु म,
+              मुखमा रामराम बगलीमा छुरा त कैयौं पटक सुनेको थिए प्रिय,
+              पि.आर. र पैसामा बिक्ने प्रेम पहिलो पटक देख्दैछु म।
+
+              गफ हान्नेहरु आज बिकासमा लागेको देख्दैछु म,
+              बिकास गर्नेहरु गफमा जनता भुलाएको देख्दैछु म,
+              देशको लागि जोश भएकाहरु जुत्ता खिएका देख्दैछु म,
+              पैसाको मोह भएकाहरु ठुला पदमा रमाएको देख्दैछु म।
+
+              अनगिन्ती सपना भएकाहरु अनाथआश्रममा देख्दैछु म,
+              पूरा नभएका सपनाहरु वृद्धाश्रममा देख्दैछु म,
+              भण्डारी र आश्रतिका सपनाहरू तुहिसकेको देख्दैछु म,
+              नया मुहारहरुको सपना सुरुहुँदै कुहिएको देख्दैछु म।
+
+              अल्पसंख्यकको नाममा आएको पैसामा पारिवारिक भ्रमणमा बिदेश घुमेको देख्दैछु म,
+              बृद्धभत्ताको उमेरमा मन्त्री निवासमा पस्ने वातावरण देख्दैछु म,
+              काबिल नेतालाई थाती राखी मृतकका बिध्वालाई पदमा स्थापित गरेको देख्दैछु म,
+              शासन र प्रशासनको खेलबाट आज राजनीति दया र करुणाको खेल भएको देख्दैछु म।
+
+              पैसाको खेलमा पिरोलिएर ५० बसन्त पार गरेका युबा नेता देख्दैछु म,
+              आफ्नो सम्पुर्ण परिवारलाई ठूलो पदमा स्थापित गराई आफ्नो गोजि भर्ने पनि देख्दैछु म,
+              नयाँ नेपालले देखाएको सपना वास्तविकतामा तुहिएको देख्दैछु म,
+              नभन मलाई कम्जोर ए दुनिया, पैसामा नबिक्ने इमानदारीता गरिबीमै देख्दैछु म।
+
+              १४ बर्षे जनयुद्धको नाफा भन्दा नुकसान देख्दैछु म,
+              राजा हटेको कैयौं बर्ष पछि पनि सवारीको पीडा देख्दैछु म,
+              अभागी यो देशमा मानिस कि त ऋणमा दाबिएको कि त खाडी भासिएको देख्दैछु म,
+              त्यही खाडिको रेमिट्यान्सले आज राजनीतिज्ञहरु बिलासितमा रमाएको देख्दैछु म।
+
+              एअरपोर्टमा समातिएको सुन चौकी पुग्दापुग्दै पित्तल भएको देख्दैछु म,
+              कर तिर्ने जनतालाई घाम र भ्रष्ट नेतालाई सित्तल भएको देख्दैछु म,
+              जनताले हातेमालो गरेर आज बालबिबाह रोकिएको देख्दैछु म,
+              फुटेर हैन जुटेर बनाए देश बन्ने रहेछ, आज त्यो देख्दैछु म।
+
+              हाउगुजी र मु पछिको जिले देशलाई केही रहत पुर्याएको देख्दैछु म,
+              कपिलवस्तु भारतमा र सगरमाथा चिनमा बिलाएको देख्दैछु म,
+              संविधान न पाउँदा उफ्रिएका जनता सम्बिधान नबुझेसी झोक्राएको देख्दैछु म,
+              क र ज्ञ नबुझ्ने सांसद भए चल्ने देशमा पुस्तकमा कर थपिएको देख्दैछु म।
+
+              बलात्कारको आरोप लगाएको सङ आज बाउको नाता लगाएको देख्दैछु म,
+              राजनितिको पापी खेलमा आफ्नो आत्मसम्मान निलाम भएको देख्दैछु म,
+              नितिको अर्थ थाहा नहुनेहरु महलमा बसि महङ्गो व्हिस्कीमा माती बिधान लेखेको देख्दैछु म,
+              अनपढहरुले चलाउने यो देशमा बिध्वानहरु पछाडी बसि थपडी मारेको देख्दैछु म।
+
+
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              अश्लील युद्ध
+            </div>
+
+            <div class="hidden-content"> 
+              नांगो तरबार लिएर आयो,
+              आफ्नो राज्यको भविष्य कोर्न,
+              नयाँ जवनी र आँखामा सपना सॅंगाली,
+              अश्लील युद्धको एक किशोर योद्धा। 
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              पर्खी बस कुरेर
+            </div>
+
+            <div class="hidden-content"> 
+              अलिकति आँट बोकेर,
+              जोवनको मात पोखेर,
+
+              थोरै डर अनि साथीसँगीको कर,
+              आफ्नो मन पोखेर लतपताएको कागज,
+
+              अनि भावनाको अक्षरमा सँगलिएको प्रेम,
+              ती वर्षौंदेखिका लेखेर थन्किएका पत्र नियाली,
+
+              आज नयाँ खाम किनेको छु,
+              ती पुराना भावना प्रस्ट्याउन,
+
+              मेरो मनको गुनासो तिमीलाई सुनाउन,
+              आउँदैछु मायाको प्रस्ताव बोकेर प्रिय,
+              पर्खी बस कुरेर। 
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              प्रणयको दिवस
+            </div>
+
+            <div class="hidden-content"> 
+              भिडको माझ पनि एकालास ठाउँमा पुर्याईदियो,
+              तिम्रो मोहब्बतले दुनियालाई झुठो ठहराउन सिकाईदियो,
+              अब न त कुनै गमको आभास हुन्छ न त खुशीको,
+              कम्बक्ख्त जिन्दगिले चुप-चाप रहन सिकाईदियो।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              आऊ
+            </div>
+
+            <div class="hidden-content"> 
+              आऊ,
+              केही पर हामी भेटौं,
+
+              यो जिन्दगीको दौडधूप भन्दा केही टाढा,
+              जहाँको हावामा स्वच्छता छ,
+
+              यो दिनभरको कोलाहल भन्दा निकै नै पर,
+              जहाँ तिम्रा गुनासाहरु यी कानसम्म आइपुग्दा धमीलिन्दैन,
+
+              यो मध्यघामको तेजिलो राप भन्दा कोसौं टाढा,
+              जहाँ तिम्रो काखको सिरानी अनि सितल छहारीको ओत छ,
+
+              यो देखावटी संसारको मोहमायाभन्दा धेरै दूर,
+              जहाँ तिम्रो सुन्दरता रुपमा हैन चरित्रमा हेरिन्छ,
+
+              यो कारखानाको दैनिक ज्यालाभन्दा पर,
+              जहाँ तिमीलाई तिम्रो जन्मले हैन कर्मले दाजिन्छ,
+
+              यो वर्गवादको सिद्धान्तभन्दा बिल्कुलै टाढाको संसारमा,
+              जहाँ हाम्रो प्रेमलाई प्रतिष्ठामा हैन गहिराइमा नापिन्छ,
+
+              आऊ,
+              त्यो एकालास ठाउँमा केही पर हामी भेटौं।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              अचम्म
+            </div>
+
+            <div class="hidden-content"> 
+              अचम्म रहेछ यो माया भन्ने कुरा पनि,
+              दुईतर्फि भए संसारको रीत,
+              एकतर्फी मात्र भए अदालतको रिट। 
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              चिसोपन
+            </div>
+
+            <div class="hidden-content"> 
+              हाम्रो सम्बन्धमा चिसोपन भएर होला,
+              आज उनको बन्द आँखामा पनि आफ्नो संसार देख्छु,
+
+              उनको रुखो अधरमा आफ्नो नामको लाली पढ्छु,
+              रेशमी तर जिङ्गृङ परेको उनको केशमा आफ्नो हात पाउँछु,
+
+              उनको संगमरमर वदनमा लाएको सेतो बस्त्रमा क्षितिज खोज्छु,
+              र शृङार हराएको उनको देहमा सुन्दर्ताको पुन: स्थापित चाहन्छु,
+
+              तर अफ्सोस्, 
+
+              आज हामी सँगै भए पनि मौनाता र एकान्त मात्र महसुस गर्छु,
+              र उनको जलिरहेको चितामा ढलेर म आफ्नो मधुमास पाउँछु।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              निर्दयी
+            </div>
+
+            <div class="hidden-content"> 
+              अबोध छन ती आँखाहरु,
+              बाटो छेउको अनाथजस्तै,
+
+              निर्दयी त रहेछ यो मन,
+              किनाराको ढुङ्गाजस्तै।
+            </div>
+          </div>
+
+              <div class="poem-card" onclick="openPoem(this)">
+            <div class="card-title"
+              style="
+              font-size:20px;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              text-align:center;
+              height:100%;
+              ">
+              शून्य संध्या
+            </div>
+
+            <div class="hidden-content"> 
+              शून्य संध्या,
+              व्यस्त रात,
+              एक्लो मन,
+              मौनताको साथ।  
+            </div>
+          </div>
+
+        </div>
+
+        <span class="prompt">bishab@domain:~/poetry$</span>
+        <span class="blink">_</span>
+
+      </div>
+    </div>
+
+    <!-- RIGHT SIDEBAR AD -->
+    <div class="side-ad">
+      <div class="ad-slot">
+        // SPONSORED_CONTENT_160x600.sh
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM AD -->
+  <div class="ad-container bottom-ad">
+    <div class="ad-slot leaderboard">
+      // SPONSORED_CONTENT_728x90_BOTTOM.sh
+    </div>
+  </div>
+
+  <div id="poemOverlay">
+
+    <div class="poem-window">
+
+      <div class="close-btn" onclick="closePoem()">
+        [ EXIT_VIEW ]
+      </div>
+
+      <h2 id="displayTitle" class="poem-title-display"></h2>
+
+      <div id="displayBody" class="poem-body"></div>
+
+    </div>
+
+  </div>
+
+  <script>
+    async function getIP() {
+      try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+
+        document.getElementById('ip-display').innerText =
+          `ping ${data.ip}`;
+      } catch (error) {
+        document.getElementById('ip-display').innerText =
+          `ping 127.0.0.1`;
+      }
+    }
+
+    function updateClock() {
+      const now = new Date();
+
+      const options = {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      };
+
+      document.getElementById('live-clock').innerText =
+        now.toLocaleString('en-US', options).replace(',', '');
+    }
+
+    function openPoem(element) {
+      document.getElementById('displayTitle').innerText =
+        element.querySelector('.card-title').innerText;
+
+      document.getElementById('displayBody').innerText =
+        element.querySelector('.hidden-content').innerText;
+
+      document.getElementById('poemOverlay').style.display = 'block';
+    }
+
+    function closePoem() {
+      document.getElementById('poemOverlay').style.display = 'none';
+    }
+
+    getIP();
+
+    setInterval(updateClock, 1000);
+
+    updateClock();
+  </script>
+
+</body>
+</html>s
