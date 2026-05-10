@@ -69,50 +69,10 @@
       font-size: 12px;
     }
 
-    /* Layout for Sidebar Ad Integration */
-    .window-layout {
-      display: flex;
-      flex-wrap: wrap;
-    }
-
     .window-content { 
       padding: 30px; 
       flex: 1; 
       min-width: 300px;
-    }
-
-    /* Ad Styling */
-    .ad-container {
-      border: 1px dashed var(--ad-muted);
-      margin: 15px 0;
-      background: rgba(255, 255, 255, 0.02);
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: var(--ad-muted);
-      overflow: hidden;
-    }
-
-    .ad-label {
-      position: absolute;
-      top: 0;
-      right: 0;
-      background: var(--ad-muted);
-      color: #000;
-      font-size: 9px;
-      padding: 2px 5px;
-      text-transform: uppercase;
-      font-weight: bold;
-    }
-
-    .sidebar-ad {
-      width: 160px;
-      min-height: 400px;
-      border-left: 1px solid var(--linux-border);
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
     }
 
     .prompt { color: var(--terminal-green); margin-right: 8px; }
@@ -242,14 +202,6 @@
           </div>
         </div>
 
-        <div class="ad-container" style="height: 120px;">
-          <div class="ad-label">Advertisement</div>
-          <div style="text-align: center; font-size: 12px;">
-            [ SPONSORED_MODULE_V1 ]<br>
-            Insert In-Feed Ad Script or Image Here
-          </div>
-        </div>
-
         <div class="archive-list">
           <div class="archive-item" onclick="openStory(this)">
             <span class="story-title">[VERSE] BROKEN EYE OF THE WORLD.txt</span>
@@ -361,14 +313,6 @@
           </div>
           </div>
 
-              <div class="ad-container" style="height: 120px;">
-          <div class="ad-label">Advertisement</div>
-          <div style="text-align: center; font-size: 12px;">
-            [ SPONSORED_MODULE_V1 ]<br>
-            Insert In-Feed Ad Script or Image Here
-          </div>
-        </div>
-
         <div class="archive-list">
           <div class="archive-item" onclick="openStory(this)">
             <span class="story-title">[VERSE] THE FACE OF DARK.txt</span>
@@ -415,13 +359,6 @@
           </div>
           </div>
 
-              <div class="ad-container" style="height: 120px;">
-          <div class="ad-label">Advertisement</div>
-          <div style="text-align: center; font-size: 12px;">
-            [ SPONSORED_MODULE_V1 ]<br>
-            Insert In-Feed Ad Script or Image Here
-          </div>
-        </div>
 
         <div class="archive-list">
           <div class="archive-item" onclick="openStory(this)">
@@ -506,16 +443,7 @@
         <span class="prompt">bishab@domain:~/stories$</span> <span class="blink" style="background: var(--terminal-green); width: 8px; height: 15px; display: inline-block;">&nbsp;</span>
       </div>
 
-      <aside class="sidebar-ad">
-        <div class="ad-container" style="flex: 1;">
-          <div class="ad-label">Advertisement</div>
-          <div style="text-align: center; font-size: 11px; transform: rotate(0deg); padding: 10px;">
-            [ EXTERNAL_LINK_BLOCK ]<br><br>
-            Vertical Ad Placement<br>
-            (e.g., 160x600)
-          </div>
-        </div>
-      </aside>
+     
     </div>
   </div>
 
